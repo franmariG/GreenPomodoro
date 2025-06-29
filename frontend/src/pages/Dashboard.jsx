@@ -19,6 +19,10 @@ export default function DashboardPage() {
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
   const audioRef = useRef(null)
+  const totalCount = sessions?.length || 0
+  const pendingCount = sessions?.filter(s => s.status === "pending").length || 0
+  const completedCount = sessions?.filter(s => s.status === "completed").length || 0
+
 
   useEffect(() => {
     audioRef.current = new Audio("/alarm.mp3")
@@ -161,14 +165,14 @@ useEffect(() => {
           />
         )}
         <FilterBar
-          filter={filter}
-          onChange={setFilter}
-          counts={{
-            all: sessions.length,
-            pending: sessions.filter(s => s.status === "pending").length,
-            completed: sessions.filter(s => s.status === "completed").length,
-          }}
-        />
+            filter={filter}
+            onChange={setFilter}
+            counts={{
+              all: totalCount,
+              pending: pendingCount,
+              completed: completedCount,
+            }}
+          />
         <TaskList
           tasks={filteredSessions}
           filter={filter}

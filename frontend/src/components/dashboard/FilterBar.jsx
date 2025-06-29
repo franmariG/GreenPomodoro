@@ -12,7 +12,7 @@ export default function FilterBar({ filter, onChange, counts }) {
         className={baseClasses}
       >
         <span className="inline-flex items-center">
-          Todas&nbsp;(<span>{counts.all}</span>)
+          Todas&nbsp;(<span>{counts?.all ?? 0}</span>)
         </span>
       </Button>
 
@@ -23,7 +23,7 @@ export default function FilterBar({ filter, onChange, counts }) {
         className={baseClasses}
       >
         <span className="inline-flex items-center">
-          Pendientes&nbsp;(<span>{counts.pending}</span>)
+          Pendientes&nbsp;(<span>{counts?.pending ?? 0}</span>)
         </span>
       </Button>
 
@@ -34,7 +34,7 @@ export default function FilterBar({ filter, onChange, counts }) {
         className={baseClasses}
       >
         <span className="inline-flex items-center">
-          Completadas&nbsp;(<span>{counts.completed}</span>)
+          Completadas&nbsp;(<span>{counts?.completed ?? 0}</span>)
         </span>
       </Button>
     </div>
