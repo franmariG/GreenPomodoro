@@ -23,7 +23,7 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center w-full flex-wrap gap-2 justify-end">
+        <div className="min-w-[160px] flex flex-1 items-center w-full flex-wrap gap-2 justify-end">
           <Badge variant={task.status === "completed" ? "default" : "secondary"}>
             {task.status === "completed" ? (
               <>
