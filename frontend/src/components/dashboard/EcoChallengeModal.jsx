@@ -5,7 +5,8 @@ import { Leaf, Lightbulb } from "lucide-react"
 export default function EcoChallengeModal({ open, challenge, onClose }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="w-[90%] max-w-sm p-8 sm:p-5 rounded-md">
+        <DialogContent className="w-[90%] max-w-sm p-8 sm:p-5 rounded-md overflow-y-auto max-h-[80vh]">
+
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-green-800">
             <Lightbulb className="h-5 w-5" />
