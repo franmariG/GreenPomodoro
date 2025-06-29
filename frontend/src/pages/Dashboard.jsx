@@ -19,45 +19,64 @@ export default function DashboardPage() {
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
   const audioRef = useRef(null)
-  const totalCount = sessions?.length || 0
-  const pendingCount = sessions?.filter(s => s.status === "pending").length || 0
-  const completedCount = sessions?.filter(s => s.status === "completed").length || 0
 
+  const totalCount = sessions.length || 0
+  const pendingCount = sessions.filter(s => s.status === "pending").length || 0
+  const completedCount = sessions.filter(s => s.status === "completed").length || 0
 
+  // Cargar sonido
   useEffect(() => {
     audioRef.current = new Audio("/alarm.mp3")
   }, [])
 
-  const refreshStats = () => {
-    setStatsRefreshKey(prev => prev + 1)
-  }
-
+  // 🔓 Desbloquear audio en móviles con la primera interacción
   useEffect(() => {
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission()
-  }
-}, [])
+    const unlockAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => {
+            audioRef.current.pause()
+            audioRef.current.currentTime = 0
+          })
+          .catch(() => {})
+      }
+      window.removeEventListener("touchend", unlockAudio)
+      window.removeEventListener("click", unlockAudio)
+    }
 
-useEffect(() => {
-  const originalTitle = document.title
+    window.addEventListener("touchend", unlockAudio, { once: true })
+    window.addEventListener("click", unlockAudio, { once: true })
+  }, [])
 
-  if (ecoModal.open) {
-    document.title = "¡Pomodoro Completado!"
-  }
+  const refreshStats = () => setStatsRefreshKey(prev => prev + 1)
 
-  const handleFocus = () => {
-    document.title = originalTitle
-  }
+  // Solicitar permisos de notificación
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission()
+    }
+  }, [])
 
-  window.addEventListener("focus", handleFocus)
+  // Cambiar título temporalmente al completar sesión
+  useEffect(() => {
+    const originalTitle = document.title
 
-  return () => {
-    window.removeEventListener("focus", handleFocus)
-    document.title = originalTitle
-  }
-}, [ecoModal.open])
+    if (ecoModal.open) {
+      document.title = "¡Pomodoro Completado!"
+    }
 
+    const handleFocus = () => {
+      document.title = originalTitle
+    }
 
+    window.addEventListener("focus", handleFocus)
+    return () => {
+      window.removeEventListener("focus", handleFocus)
+      document.title = originalTitle
+    }
+  }, [ecoModal.open])
+
+  // Reloj del pomodoro
   useEffect(() => {
     let interval
     if (activeTimer && activeTimer.timeLeft > 0) {
@@ -66,7 +85,6 @@ useEffect(() => {
           if (!prev) return null
           const newTimeLeft = prev.timeLeft - 1
           if (newTimeLeft <= 0) {
-            // Llamar al endpoint para completar sesión y obtener reto
             handleCompleteSession(prev.taskId)
             return null
           }
@@ -77,6 +95,7 @@ useEffect(() => {
     return () => clearInterval(interval)
   }, [activeTimer])
 
+  // Obtener sesiones al montar
   useEffect(() => {
     getSessions().then(setSessions)
   }, [])
@@ -99,62 +118,61 @@ useEffect(() => {
     await deleteSession(id)
     setSessions(sessions.filter((s) => s._id !== id))
     if (activeTimer?.taskId === id) setActiveTimer(null)
-    refreshStats() 
+    refreshStats()
   }
 
   const handleStart = (session) => {
-  // Este llamado desbloquea el audio en móviles al tocar
-  audioRef.current?.play().catch(() => {})
-  audioRef.current.pause()
-  audioRef.current.currentTime = 0
-
-  setActiveTimer({
-    taskId: session._id,
-    timeLeft: session.duration * 60,
-  })
-}
+    setActiveTimer({
+      taskId: session._id,
+      timeLeft: session.duration * 60,
+    })
+  }
 
   const handleCancelTimer = () => {
     setActiveTimer(null)
   }
 
   const handleCompleteSession = async (id) => {
-  if (isCompletingRef.current) return
-  isCompletingRef.current = true
-  try {
-    const res = await completeSession(id)
-    const updated = res.session
-    const challenge = res.retoVerde
-    setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
-    setEcoModal({ open: true, challenge })
+    if (isCompletingRef.current) return
+    isCompletingRef.current = true
+    try {
+      const res = await completeSession(id)
+      const updated = res.session
+      const challenge = res.retoVerde
+      setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
+      setEcoModal({ open: true, challenge })
 
-    if (Notification.permission === "granted") {
-      new Notification("¡Pomodoro terminado!", {
-        body: "Haz una pausa y completa tu reto ecológico",
-        icon: "/greenpomodoro.svg",
-      })
+      // 🔔 Notificación
+      if (Notification.permission === "granted") {
+        new Notification("¡Pomodoro terminado!", {
+          body: "Haz una pausa y completa tu reto ecológico",
+          icon: "/greenpomodoro.svg",
+        })
+      }
+
+      // 🔊 Reproducir sonido
+      if (audioRef.current) {
+        audioRef.current.play().catch((err) =>
+          console.error("Error de sonido:", err)
+        )
+      }
+
+      refreshStats()
+    } catch (err) {
+      console.error("Error completando sesión:", err)
+    } finally {
+      isCompletingRef.current = false
     }
-
-    if (audioRef.current) {
-      audioRef.current.play().catch((err) => console.error("Error de sonido:", err))
-    }
-    refreshStats() 
-
-  } catch (err) {
-    console.error("Error completando sesión:", err)
-  } finally {
-    isCompletingRef.current = false
   }
-}
 
   const filteredSessions = sessions.filter((s) => {
-    if (filter === "all") return true;
-    return s.status === filter;
-  });
+    if (filter === "all") return true
+    return s.status === filter
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-green-300 to-white">
-      <DashboardHeader/>
+      <DashboardHeader />
       <main className="w-full px-4 py-8 md:px-6 max-w-4xl mx-auto space-y-8">
         <AddSessionForm onAdd={handleAdd} />
         {activeTimer && (
@@ -165,14 +183,14 @@ useEffect(() => {
           />
         )}
         <FilterBar
-            filter={filter}
-            onChange={setFilter}
-            counts={{
-              all: totalCount,
-              pending: pendingCount,
-              completed: completedCount,
-            }}
-          />
+          filter={filter}
+          onChange={setFilter}
+          counts={{
+            all: totalCount,
+            pending: pendingCount,
+            completed: completedCount,
+          }}
+        />
         <TaskList
           tasks={filteredSessions}
           filter={filter}
@@ -182,6 +200,7 @@ useEffect(() => {
         />
         <StatisticsPanel refreshKey={statsRefreshKey} />
       </main>
+
       <EditTaskModal
         open={!!editingTask}
         task={editingTask}
