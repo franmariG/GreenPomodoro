@@ -49,3 +49,48 @@ exports.deleteSession = async (req, res) => {
   await Session.findByIdAndDelete(id);
   res.json({ message: 'Eliminado' });
 };
+
+// Obtener estadísticas generales
+exports.getStats = async (req, res) => {
+  try {
+    const completedSessions = await Session.find({ status: "completed" });
+
+    const totalSessions = completedSessions.length;
+    const totalTime = completedSessions.reduce((sum, s) => sum + s.duration, 0);
+
+    // Últimos 7 días
+    const today = new Date();
+    const last7Days = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(today.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    });
+
+    const weeklyData = await Promise.all(
+      last7Days.map(async (day) => {
+        const nextDay = new Date(day);
+        nextDay.setDate(day.getDate() + 1);
+
+        const count = await Session.countDocuments({
+          status: "completed",
+          createdAt: { $gte: day, $lt: nextDay },
+        });
+
+        return {
+          day: day.toLocaleDateString("es-VE", { weekday: "short" }),
+          count,
+        };
+      })
+    );
+
+    res.json({
+      totalSessions,
+      totalTime,
+      weeklyData: weeklyData.reverse(), // De lunes a hoy
+    });
+  } catch (err) {
+    console.error("Error al obtener estadísticas:", err);
+    res.status(500).json({ error: "No se pudieron obtener las estadísticas" });
+  }
+};

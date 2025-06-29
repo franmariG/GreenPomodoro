@@ -7,5 +7,6 @@ router.post('/', sessionCtrl.createSession);
 router.put('/:id', sessionCtrl.updateSession);
 router.patch('/:id/complete', sessionCtrl.completeSession);
 router.delete('/:id', sessionCtrl.deleteSession);
+router.get('/stats', sessionCtrl.getStats);
 
 module.exports = router;
