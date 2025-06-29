@@ -17,6 +17,11 @@ export default function DashboardPage() {
   const [editingTask, setEditingTask] = useState(null)
   const [ecoModal, setEcoModal] = useState({ open: false, challenge: "" })
   const isCompletingRef = useRef(false)
+  const [statsRefreshKey, setStatsRefreshKey] = useState(0)
+
+  const refreshStats = () => {
+    setStatsRefreshKey(prev => prev + 1)
+  }
 
   useEffect(() => {
   if (Notification.permission !== "granted") {
@@ -85,6 +90,7 @@ useEffect(() => {
     await deleteSession(id)
     setSessions(sessions.filter((s) => s._id !== id))
     if (activeTimer?.taskId === id) setActiveTimer(null)
+    refreshStats() 
   }
 
   const handleStart = (session) => {
@@ -117,6 +123,7 @@ useEffect(() => {
 
     const audio = new Audio("/alarm.mp3")
     audio.play()
+    refreshStats() 
 
   } catch (err) {
     console.error("Error completando sesión:", err)
@@ -151,7 +158,6 @@ useEffect(() => {
             completed: sessions.filter(s => s.status === "completed").length,
           }}
         />
-
         <TaskList
           tasks={filteredSessions}
           filter={filter}
@@ -159,12 +165,8 @@ useEffect(() => {
           onDelete={handleDelete}
           onEdit={setEditingTask}
         />
-
-        <StatisticsPanel />
-
+        <StatisticsPanel refreshKey={statsRefreshKey} />
       </main>
-
-
       <EditTaskModal
         open={!!editingTask}
         task={editingTask}

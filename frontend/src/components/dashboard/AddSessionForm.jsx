@@ -25,7 +25,7 @@ export default function AddSessionForm({ onAdd }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <Input
             placeholder="Nombre de la tarea"
             value={task}
@@ -34,14 +34,17 @@ export default function AddSessionForm({ onAdd }) {
             className="flex-1"
           />
           <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              min="1"
-              max="60"
+            <select
               value={duration}
-              onChange={(e) => setDuration(Number.parseInt(e.target.value) || 25)}
-              className="w-20"
-            />
+              onChange={(e) => setDuration(parseInt(e.target.value) || 25)}
+              className="w-20 px-3 py-2 text-sm rounded-md appearance-none border border-input bg-background shadow-sm focus:outline-none focus:border-ring transition"
+            >
+              {Array.from({ length: 60 }, (_, i) => i + 1).map((min) => (
+                <option key={min} value={min}>
+                  {min}
+                </option>
+              ))}
+            </select>
             <span className="text-sm text-gray-600">min</span>
           </div>
           <Button onClick={handleAdd} className="bg-green-600 hover:hover:bg-green-700 focus:ring-0 focus:outline-none focus:border-green-700 hover:border-green-700 border-transparent">

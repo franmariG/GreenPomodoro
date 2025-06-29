@@ -13,7 +13,7 @@ export default function DashboardHeader() {
         <Link to="/">
           <Button variant="outline" size="sm" className="text-black hover:border-gray-600 focus:ring-0 focus:outline-none focus:border-gray-600">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a la landing
+            Volver
           </Button>
         </Link>
       </div>

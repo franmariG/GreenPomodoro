@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 
 export default function FilterBar({ filter, onChange, counts }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button variant={filter === "all" ? "default" : "outline"} onClick={() => onChange("all")} size="sm" className="hover:border-gray-600 focus:ring-0 focus:outline-none focus:border-gray-600">
         Todas ({counts.all})
       </Button>

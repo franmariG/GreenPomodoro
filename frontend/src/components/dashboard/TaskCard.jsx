@@ -6,7 +6,7 @@ import { CheckCircle, Clock, Edit, Play, Trash2 } from "lucide-react"
 export default function TaskCard({ task, onStart, onDelete, onEdit }) {
   return (
     <Card className={task.status === "completed" ? "bg-green-50 border-green-200" : ""}>
-      <CardContent className="flex items-center justify-between p-4">
+      <CardContent className="flex flex-wrap items-center justify-between p-4 gap-4">
         <div className="flex items-center gap-4">
           <div
             className={`w-3 h-3 rounded-full ${
@@ -23,7 +23,7 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center w-full flex-wrap gap-2 justify-end">
           <Badge variant={task.status === "completed" ? "default" : "secondary"}>
             {task.status === "completed" ? (
               <>
@@ -38,7 +38,7 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
             )}
           </Badge>
 
-          <div className="flex gap-1">
+          <div className="flex gap-1 items-center self-center">
             {task.status === "pending" && (
               <>
                 <Button

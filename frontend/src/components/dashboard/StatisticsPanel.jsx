@@ -13,14 +13,14 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 
-export default function StatisticsPanel() {
+export default function StatisticsPanel({ refreshKey }) {
   const [stats, setStats] = useState(null)
 
   useEffect(() => {
-  getSessionStats()
-    .then(setStats)
-    .catch((err) => console.error("Error al cargar estadísticas:", err));
-}, []);
+    getSessionStats()
+      .then(setStats)
+      .catch((err) => console.error("Error al cargar estadísticas:", err));
+  }, [refreshKey])
 
   if (!stats) return null
 

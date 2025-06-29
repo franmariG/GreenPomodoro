@@ -10,7 +10,7 @@ export default function ActiveTimerCard({ taskName, timeLeft, onCancel }) {
   }
 
   return (
-    <Card className="border-green-200 bg-green-50">
+    <Card className="border-green-200 bg-white">
       <CardContent className="text-center py-8">
         <div className="space-y-4">
           <div className="text-6xl font-mono text-green-600">{formatTime(timeLeft)}</div>
