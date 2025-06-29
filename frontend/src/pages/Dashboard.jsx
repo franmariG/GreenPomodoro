@@ -9,6 +9,9 @@ import StatisticsPanel from "@/components/dashboard/StatisticsPanel"
 import ActiveTimerCard from "@/components/dashboard/ActiveTimerCard"
 import EditTaskModal from "@/components/dashboard/EditTaskModal"
 import EcoChallengeModal from "@/components/dashboard/EcoChallengeModal"
+import ConfirmDeleteModal from "@/components/dashboard/ConfirmDeleteModal"
+import { toast } from "sonner"
+import { AnimatePresence } from "framer-motion"
 
 export default function DashboardPage() {
   const [sessions, setSessions] = useState([])
@@ -20,6 +23,8 @@ export default function DashboardPage() {
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
   const [showCompleteLoading, setShowCompleteLoading] = useState(false)
+  const [sessionToDelete, setSessionToDelete] = useState(null)
+
 
   const audioRef = useRef(null)
 
@@ -99,6 +104,7 @@ export default function DashboardPage() {
 
   const handleAdd = async (task, duration) => {
     const newSession = await createSession(task, duration)
+    toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.")
     setSessions([newSession, ...sessions])
   }
 
@@ -108,14 +114,18 @@ export default function DashboardPage() {
       duration: updatedTask.duration,
     })
     setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
+    toast.success("Sesión actualizada. Los cambios se guardaron correctamente.")
     setEditingTask(null)
   }
 
-  const handleDelete = async (id) => {
-    await deleteSession(id)
-    setSessions(sessions.filter((s) => s._id !== id))
-    if (activeTimer?.taskId === id) setActiveTimer(null)
+  const handleDeleteConfirm = async () => {
+    if (!sessionToDelete) return
+    await deleteSession(sessionToDelete._id)
+    setSessions(sessions.filter((s) => s._id !== sessionToDelete._id))
+    if (activeTimer?.taskId === sessionToDelete._id) setActiveTimer(null)
     refreshStats()
+    toast.success("Sesión eliminada. Se eliminó correctamente." )
+    setSessionToDelete(null)
   }
 
   const handleStart = (session) => {
@@ -174,13 +184,16 @@ export default function DashboardPage() {
       <main className="w-full px-4 py-8 md:px-6 max-w-4xl mx-auto space-y-8">
         <AddSessionForm onAdd={handleAdd} />
 
-        {activeTimer && (
-          <ActiveTimerCard
-            session={sessions.find((s) => s._id === activeTimer.taskId)}
-            timeLeft={activeTimer.timeLeft}
-            onCancel={handleCancelTimer}
-          />
-        )}
+        <AnimatePresence mode="wait">
+          {activeTimer && (
+            <ActiveTimerCard
+              key="active-timer"
+              session={sessions.find((s) => s._id === activeTimer.taskId)}
+              timeLeft={activeTimer.timeLeft}
+              onCancel={handleCancelTimer}
+            />
+          )}
+        </AnimatePresence>
 
         {loading ? (
            <div className="flex flex-col items-center justify-center py-12 text-gray-600">
@@ -202,7 +215,7 @@ export default function DashboardPage() {
               tasks={filteredSessions}
               filter={filter}
               onStart={handleStart}
-              onDelete={handleDelete}
+              onDelete={(session) => setSessionToDelete(session)}
               onEdit={setEditingTask}
             />
             <StatisticsPanel refreshKey={statsRefreshKey} />
@@ -228,6 +241,13 @@ export default function DashboardPage() {
         onClose={() => setEcoModal({ open: false, challenge: "" })}
         challenge={ecoModal.challenge}
       />
+
+      <ConfirmDeleteModal
+        open={!!sessionToDelete}
+        onClose={() => setSessionToDelete(null)}
+        onConfirm={handleDeleteConfirm}
+      />
+
     </div>
   )
 }

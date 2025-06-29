@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Timer, BicepsFlexed, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -26,14 +26,36 @@ const steps = [
 
 export default function HowItWorksSteps() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const intervalRef = useRef(null)
 
-  const goToNext = () => setCurrentIndex((prev) => (prev + 1) % steps.length)
-  const goToPrev = () => setCurrentIndex((prev) => (prev - 1 + steps.length) % steps.length)
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % steps.length)
+    resetInterval()
+  }
+
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + steps.length) % steps.length)
+    resetInterval()
+  }
+
+
+  const startInterval = () => {
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % steps.length)
+    }, 5000)
+  }
+
+  const resetInterval = () => {
+    clearInterval(intervalRef.current)
+    startInterval()
+  }
+
 
   useEffect(() => {
-    const interval = setInterval(goToNext, 8000)
-    return () => clearInterval(interval)
+    startInterval()
+    return () => clearInterval(intervalRef.current)
   }, [])
+
 
   return (
     <section className="px-6 bg-gradient-to-b from-green-200 via-green-50 to-white py-16">
@@ -104,7 +126,10 @@ export default function HowItWorksSteps() {
         {steps.map((_, i) => (
           <div
             key={i}
-            onClick={() => setCurrentIndex(i)}
+            onClick={() => {
+              setCurrentIndex(i)
+              resetInterval()
+            }}
             className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${
               currentIndex === i ? "bg-green-600" : "bg-gray-300"
             }`}
