@@ -19,6 +19,8 @@ export default function DashboardPage() {
   const [ecoModal, setEcoModal] = useState({ open: false, challenge: "" })
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
+  const [showCompleteLoading, setShowCompleteLoading] = useState(false)
+
   const audioRef = useRef(null)
 
   const totalCount = sessions.length || 0
@@ -128,35 +130,38 @@ export default function DashboardPage() {
   }
 
   const handleCompleteSession = async (id) => {
-    if (isCompletingRef.current) return
-    isCompletingRef.current = true
-    try {
-      const res = await completeSession(id)
-      const updated = res.session
-      const challenge = res.retoVerde
-      setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
-      setEcoModal({ open: true, challenge })
+  if (isCompletingRef.current) return
+  isCompletingRef.current = true
+  setShowCompleteLoading(true)
 
-      if (Notification.permission === "granted") {
-        new Notification("¡Pomodoro terminado!", {
-          body: "Haz una pausa y completa tu reto ecológico",
-          icon: "/greenpomodoro.svg",
-        })
-      }
+  try {
+    const res = await completeSession(id)
+    const updated = res.session
+    const challenge = res.retoVerde
+    setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
+    setEcoModal({ open: true, challenge })
 
-      if (audioRef.current) {
-        audioRef.current.play().catch((err) =>
-          console.error("Error de sonido:", err)
-        )
-      }
-
-      refreshStats()
-    } catch (err) {
-      console.error("Error completando sesión:", err)
-    } finally {
-      isCompletingRef.current = false
+    if (Notification.permission === "granted") {
+      new Notification("¡Pomodoro terminado!", {
+        body: "Haz una pausa y completa tu reto ecológico",
+        icon: "/greenpomodoro.svg",
+      })
     }
+
+    if (audioRef.current) {
+      audioRef.current.play().catch((err) =>
+        console.error("Error de sonido:", err)
+      )
+    }
+
+    refreshStats()
+  } catch (err) {
+    console.error("Error completando sesión:", err)
+  } finally {
+    isCompletingRef.current = false
+    setShowCompleteLoading(false)
   }
+}
 
   const filteredSessions = sessions.filter((s) => {
     if (filter === "all") return true
@@ -204,6 +209,12 @@ export default function DashboardPage() {
           </>
         )}
       </main>
+
+      {showCompleteLoading && (
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
 
       <EditTaskModal
         open={!!editingTask}
