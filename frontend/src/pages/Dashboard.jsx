@@ -18,6 +18,11 @@ export default function DashboardPage() {
   const [ecoModal, setEcoModal] = useState({ open: false, challenge: "" })
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
+  const audioRef = useRef(null)
+
+  useEffect(() => {
+    audioRef.current = new Audio("/alarm.mp3")
+  }, [])
 
   const refreshStats = () => {
     setStatsRefreshKey(prev => prev + 1)
@@ -94,11 +99,16 @@ useEffect(() => {
   }
 
   const handleStart = (session) => {
-    setActiveTimer({
-      taskId: session._id,
-      timeLeft: session.duration * 60,
-    })
-  }
+  // Este llamado desbloquea el audio en móviles al tocar
+  audioRef.current?.play().catch(() => {})
+  audioRef.current.pause()
+  audioRef.current.currentTime = 0
+
+  setActiveTimer({
+    taskId: session._id,
+    timeLeft: session.duration * 60,
+  })
+}
 
   const handleCancelTimer = () => {
     setActiveTimer(null)
@@ -121,8 +131,9 @@ useEffect(() => {
       })
     }
 
-    const audio = new Audio("/alarm.mp3")
-    audio.play()
+    if (audioRef.current) {
+      audioRef.current.play().catch((err) => console.error("Error de sonido:", err))
+    }
     refreshStats() 
 
   } catch (err) {
