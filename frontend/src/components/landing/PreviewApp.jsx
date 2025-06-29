@@ -2,15 +2,26 @@ import React, { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import useIsMobile from "@/hooks/useIsMobile" // asegúrate de tener la ruta correcta
 
 export default function PreviewApp() {
-  const images = [
-    "/previewApp/previewApp-1.png",
-    "/previewApp/previewApp-2.png",
-    "/previewApp/previewApp-3.png",
-    "/previewApp/previewApp-4.png",
-    "/previewApp/previewApp-5.png",
-  ]
+  const isMobile = useIsMobile()
+
+  const images = isMobile
+    ? [
+        "/previewApp/previewAppMobile-1.png",
+        "/previewApp/previewAppMobile-2.png",
+        "/previewApp/previewAppMobile-3.png",
+        "/previewApp/previewAppMobile-4.png",
+        "/previewApp/previewAppMobile-5.png",
+      ]
+    : [
+        "/previewApp/previewApp-1.png",
+        "/previewApp/previewApp-2.png",
+        "/previewApp/previewApp-3.png",
+        "/previewApp/previewApp-4.png",
+        "/previewApp/previewApp-5.png",
+      ]
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const intervalRef = useRef(null)
@@ -80,9 +91,9 @@ export default function PreviewApp() {
             <ChevronLeft className="h-6 w-6" />
           </button>
 
-          <div className="flex-grow relative h-[360px] md:h-[420px]">
-            <Card className="overflow-hidden shadow-2xl h-full">
-              <CardContent className="p-0 bg-gradient-to-br from-green-300 to-green-400 h-full flex items-center justify-center">
+          <div className="relative w-full aspect-[9/16] md:aspect-[16/9] max-w-sm sm:max-w-3xl">
+            <Card className="overflow-hidden shadow-2xl w-full h-full">
+              <CardContent className="p-0 bg-gradient-to-br from-green-300 to-green-400 w-full h-full flex items-center justify-center">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentIndex}
