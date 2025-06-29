@@ -28,7 +28,7 @@ export default function EditTaskModal({ open, task, onCancel, onSave }) {
 
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="w-[90%] max-w-sm p-8 sm:p-5 rounded-md">
+      <DialogContent className="w-[90%] max-w-sm p-8 sm:p-5 rounded-md [&>button]:hidden">
         <DialogHeader>
           <DialogTitle>Editar Tarea</DialogTitle>
         </DialogHeader>
