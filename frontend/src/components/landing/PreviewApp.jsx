@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import useIsMobile from "@/hooks/useIsMobile" // asegúrate de tener la ruta correcta
+import useIsMobile from "@/hooks/useIsMobile"
 
 export default function PreviewApp() {
   const isMobile = useIsMobile()
@@ -24,7 +24,23 @@ export default function PreviewApp() {
       ]
 
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [loadedImages, setLoadedImages] = useState(Array(images.length).fill(false))
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
   const intervalRef = useRef(null)
+
+  useEffect(() => {
+    if (loadedImages.every(Boolean)) {
+      setAllImagesLoaded(true)
+    }
+  }, [loadedImages])
+
+  const handleImageLoad = (index) => {
+    setLoadedImages((prev) => {
+      const updated = [...prev]
+      updated[index] = true
+      return updated
+    })
+  }
 
   const startInterval = () => {
     intervalRef.current = setInterval(() => {
@@ -92,13 +108,19 @@ export default function PreviewApp() {
           </button>
 
           <div className="relative w-full aspect-[9/16] md:aspect-[16/9] max-w-sm sm:max-w-3xl">
-            <Card className="overflow-hidden shadow-2xl w-full h-full">
-              <CardContent className="p-0 bg-gradient-to-br from-green-300 to-green-400 w-full h-full flex items-center justify-center">
+            <Card className="overflow-hidden shadow-2xl w-full h-full relative">
+              <CardContent className="p-0 bg-gradient-to-br from-green-300 to-green-400 w-full h-full flex items-center justify-center relative">
+                {!allImagesLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
+                    <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentIndex}
                     src={images[currentIndex]}
                     alt={`App Preview ${currentIndex + 1}`}
+                    onLoad={() => handleImageLoad(currentIndex)}
                     className="w-full h-full object-contain rounded-lg"
                     initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}

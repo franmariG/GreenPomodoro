@@ -12,6 +12,7 @@ import EcoChallengeModal from "@/components/dashboard/EcoChallengeModal"
 
 export default function DashboardPage() {
   const [sessions, setSessions] = useState([])
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all")
   const [activeTimer, setActiveTimer] = useState(null)
   const [editingTask, setEditingTask] = useState(null)
@@ -24,12 +25,10 @@ export default function DashboardPage() {
   const pendingCount = sessions.filter(s => s.status === "pending").length || 0
   const completedCount = sessions.filter(s => s.status === "completed").length || 0
 
-  // Cargar sonido
   useEffect(() => {
     audioRef.current = new Audio("/alarm.mp3")
   }, [])
 
-  // 🔓 Desbloquear audio en móviles con la primera interacción
   useEffect(() => {
     const unlockAudio = () => {
       if (audioRef.current) {
@@ -50,25 +49,20 @@ export default function DashboardPage() {
 
   const refreshStats = () => setStatsRefreshKey(prev => prev + 1)
 
-  // Solicitar permisos de notificación
   useEffect(() => {
     if (Notification.permission !== "granted") {
       Notification.requestPermission()
     }
   }, [])
 
-  // Cambiar título temporalmente al completar sesión
   useEffect(() => {
     const originalTitle = document.title
-
     if (ecoModal.open) {
       document.title = "¡Pomodoro Completado!"
     }
-
     const handleFocus = () => {
       document.title = originalTitle
     }
-
     window.addEventListener("focus", handleFocus)
     return () => {
       window.removeEventListener("focus", handleFocus)
@@ -76,7 +70,6 @@ export default function DashboardPage() {
     }
   }, [ecoModal.open])
 
-  // Reloj del pomodoro
   useEffect(() => {
     let interval
     if (activeTimer && activeTimer.timeLeft > 0) {
@@ -95,9 +88,11 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [activeTimer])
 
-  // Obtener sesiones al montar
   useEffect(() => {
-    getSessions().then(setSessions)
+    setLoading(true)
+    getSessions()
+      .then(setSessions)
+      .finally(() => setLoading(false))
   }, [])
 
   const handleAdd = async (task, duration) => {
@@ -142,7 +137,6 @@ export default function DashboardPage() {
       setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
       setEcoModal({ open: true, challenge })
 
-      // 🔔 Notificación
       if (Notification.permission === "granted") {
         new Notification("¡Pomodoro terminado!", {
           body: "Haz una pausa y completa tu reto ecológico",
@@ -150,7 +144,6 @@ export default function DashboardPage() {
         })
       }
 
-      // 🔊 Reproducir sonido
       if (audioRef.current) {
         audioRef.current.play().catch((err) =>
           console.error("Error de sonido:", err)
@@ -175,6 +168,7 @@ export default function DashboardPage() {
       <DashboardHeader />
       <main className="w-full px-4 py-8 md:px-6 max-w-4xl mx-auto space-y-8">
         <AddSessionForm onAdd={handleAdd} />
+
         {activeTimer && (
           <ActiveTimerCard
             session={sessions.find((s) => s._id === activeTimer.taskId)}
@@ -182,23 +176,33 @@ export default function DashboardPage() {
             onCancel={handleCancelTimer}
           />
         )}
-        <FilterBar
-          filter={filter}
-          onChange={setFilter}
-          counts={{
-            all: totalCount,
-            pending: pendingCount,
-            completed: completedCount,
-          }}
-        />
-        <TaskList
-          tasks={filteredSessions}
-          filter={filter}
-          onStart={handleStart}
-          onDelete={handleDelete}
-          onEdit={setEditingTask}
-        />
-        <StatisticsPanel refreshKey={statsRefreshKey} />
+
+        {loading ? (
+           <div className="flex flex-col items-center justify-center py-12 text-gray-600">
+             <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+             <p className="text-sm">Cargando sesiones...</p>
+           </div>
+        ) : (
+          <>
+            <FilterBar
+              filter={filter}
+              onChange={setFilter}
+              counts={{
+                all: totalCount,
+                pending: pendingCount,
+                completed: completedCount,
+              }}
+            />
+            <TaskList
+              tasks={filteredSessions}
+              filter={filter}
+              onStart={handleStart}
+              onDelete={handleDelete}
+              onEdit={setEditingTask}
+            />
+            <StatisticsPanel refreshKey={statsRefreshKey} />
+          </>
+        )}
       </main>
 
       <EditTaskModal
