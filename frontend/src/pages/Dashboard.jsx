@@ -23,6 +23,9 @@ export default function DashboardPage() {
   const isCompletingRef = useRef(false)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
   const [showCompleteLoading, setShowCompleteLoading] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [sessionToDelete, setSessionToDelete] = useState(null)
 
 
@@ -103,29 +106,50 @@ export default function DashboardPage() {
   }, [])
 
   const handleAdd = async (task, duration) => {
-    const newSession = await createSession(task, duration)
-    toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.")
-    setSessions([newSession, ...sessions])
+    setIsAdding(true)
+    try {
+      const newSession = await createSession(task, duration)
+      toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.")
+      setSessions([newSession, ...sessions])
+    } catch (err) {
+      toast.error("Error al añadir sesión.")
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   const handleUpdate = async (updatedTask) => {
-    const updated = await updateSession(updatedTask._id, {
-      task: updatedTask.task,
-      duration: updatedTask.duration,
-    })
-    setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
-    toast.success("Sesión actualizada. Los cambios se guardaron correctamente.")
-    setEditingTask(null)
+    setIsUpdating(true)
+    try {
+      const updated = await updateSession(updatedTask._id, {
+        task: updatedTask.task,
+        duration: updatedTask.duration,
+      })
+      setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
+      toast.success("Sesión actualizada. Los cambios se guardaron correctamente.")
+      setEditingTask(null)
+    } catch (err) {
+      toast.error("Error al actualizar sesión.")
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   const handleDeleteConfirm = async () => {
     if (!sessionToDelete) return
-    await deleteSession(sessionToDelete._id)
-    setSessions(sessions.filter((s) => s._id !== sessionToDelete._id))
-    if (activeTimer?.taskId === sessionToDelete._id) setActiveTimer(null)
-    refreshStats()
-    toast.success("Sesión eliminada. Se eliminó correctamente." )
-    setSessionToDelete(null)
+    setIsDeleting(true)
+    try {
+      await deleteSession(sessionToDelete._id)
+      setSessions(sessions.filter((s) => s._id !== sessionToDelete._id))
+      if (activeTimer?.taskId === sessionToDelete._id) setActiveTimer(null)
+      refreshStats()
+      toast.success("Sesión eliminada correctamente.")
+      setSessionToDelete(null)
+    } catch (err) {
+      toast.error("Error al eliminar sesión.")
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const handleStart = (session) => {
@@ -223,9 +247,9 @@ export default function DashboardPage() {
         )}
       </main>
 
-      {showCompleteLoading && (
-        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center">
-          <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      {(showCompleteLoading || isAdding || isUpdating || isDeleting) && (
+        <div className="fixed inset-0 z-[200] bg-black/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
