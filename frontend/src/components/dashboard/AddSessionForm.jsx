@@ -31,7 +31,7 @@ export default function AddSessionForm({ onAdd }) {
             value={task}
             onChange={(e) => setTask(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-            className="flex-1"
+            className="flex-1 min-w-[150px]"
           />
           <div className="flex items-center gap-2">
             <select

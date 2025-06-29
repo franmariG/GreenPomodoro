@@ -9,7 +9,7 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
       <CardContent className="flex flex-wrap items-center justify-between p-4 gap-4">
         <div className="flex items-center gap-4">
           <div
-            className={`w-3 h-3 rounded-full ${
+            className={` w-3 h-3 rounded-full ${
               task.status === "completed" ? "bg-green-500" : "bg-gray-300"
             }`}
           />

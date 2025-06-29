@@ -33,7 +33,7 @@ export default function HeroSection() {
           <Link to="/dashboard">
             <Button
               size="lg"
-              className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6 focus:ring-0 focus:outline-none focus:border-green-700 hover:border-green-700 border-transparent"
+              className="bg-green-600 hover:bg-green-700 text-lg px-4 py-6 focus:ring-0 focus:outline-none focus:border-green-700 hover:border-green-700 border-transparent"
             >
               <img
                 src="/greenpomodoro.svg"
