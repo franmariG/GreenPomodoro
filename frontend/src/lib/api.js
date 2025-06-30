@@ -17,7 +17,6 @@ export const createSession = async ({ task, duration, createdAt }) => {
   return await res.json();
 };
 
-
 export const updateSession = async (id, data) => {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: "PUT",
