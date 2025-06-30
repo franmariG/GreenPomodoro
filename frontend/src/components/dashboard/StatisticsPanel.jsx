@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { getCompletedSessions, getSessionsCompleted } from "@/lib/api";
+import { getSessionsCompleted } from "@/lib/api";
 import { Bar } from "react-chartjs-2";
 import { motion } from "framer-motion";
 import {
@@ -29,6 +29,7 @@ function groupSessionsByDay(sessions) {
     const date = new Date(createdAt);
     // Extraemos la fecha en formato local YYYY-MM-DD para agrupar
     const dayKey = date.toLocaleDateString("en-CA"); // formato ISO local sin zona horaria
+    console.log(`Fecha local agrupada (dayKey): ${dayKey}, Día de la semana: ${date.toLocaleDateString("es-ES", { weekday: "long" })}`);
 
     if (!groups[dayKey]) groups[dayKey] = { count: 0, totalDuration: 0 };
     groups[dayKey].count += 1;
@@ -83,9 +84,10 @@ export default function StatisticsPanel({ refreshKey }) {
 
   const barData = {
     labels: stats.weeklyData.map((d) => {
-      const date = new Date(d.dayISO);
-      return date.toLocaleDateString("es-ES", { weekday: "short" });
-    }),
+    const [year, month, day] = d.dayISO.split("-");
+    const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+    return localDate.toLocaleDateString("es-ES", { weekday: "short" });
+  }),
     datasets: [
       {
         label: "Sesiones completadas",
