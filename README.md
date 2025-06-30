@@ -101,8 +101,8 @@ GreenPomodoro/
 ```json
 {
   "_id": "ObjectId",
-  "task": "string",         
-  "duration": "number",    
+  "task": "String",         
+  "duration": "Number",    
   "status": "pending | completed",
   "createdAt": "Date"     
 }
