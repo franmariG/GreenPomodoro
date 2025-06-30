@@ -106,19 +106,17 @@ export default function DashboardPage() {
   }, [])
 
   const handleAdd = async (task, duration) => {
-    setIsAdding(true);
+    setIsAdding(true)
     try {
-      const createdAt = new Date().toISOString(); // Fecha local del cliente en ISO UTC
-      const newSession = await createSession(task, duration, createdAt);
-      toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.");
-      setSessions([newSession, ...sessions]);
+      const newSession = await createSession(task, duration)
+      toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.")
+      setSessions([newSession, ...sessions])
     } catch (err) {
-      toast.error("Error al añadir sesión.");
+      toast.error("Error al añadir sesión.")
     } finally {
-      setIsAdding(false);
+      setIsAdding(false)
     }
-  };
-
+  }
 
   const handleUpdate = async (updatedTask) => {
     setIsUpdating(true)

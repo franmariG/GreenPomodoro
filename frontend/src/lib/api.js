@@ -7,11 +7,11 @@ export const getSessions = async () => {
   return await res.json();
 };
 
-export const createSession = async ({ task, duration, createdAt }) => {
+export const createSession = async ({ task, duration }) => {
   const res = await fetch(BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ task, duration, createdAt }),
+    body: JSON.stringify({ task, duration }),
   });
   if (!res.ok) throw new Error("Error al crear la sesión");
   return await res.json();

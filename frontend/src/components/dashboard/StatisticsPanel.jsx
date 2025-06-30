@@ -33,16 +33,18 @@ export default function StatisticsPanel({ refreshKey }) {
   if (!stats) return null
 
   const barData = {
-    labels: stats.weeklyData.map((d) => d.day),
+    labels: stats.weeklyData.map((d) =>
+      new Date(d.dayISO).toLocaleDateString("es-VE", { weekday: "short" })
+    ),
     datasets: [
       {
         label: "Sesiones completadas",
         data: stats.weeklyData.map((d) => d.count),
-        backgroundColor: "#16a34a", // Verde
+        backgroundColor: "#16a34a",
         borderRadius: 6,
       },
     ],
-  }
+  };
 
   const barOptions = {
     responsive: true,
