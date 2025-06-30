@@ -112,7 +112,7 @@ GreenPomodoro/
 
 Todos los endpoints están bajo la ruta base: `/api/sessions`
 
-Además, la ruta raíz / del backend responde con un mensaje de texto simple (API GreenPomodoro activa) para evitar errores al acceder directamente.
+Además, la ruta raíz `/` del backend responde con un mensaje de texto simple (API GreenPomodoro activa) para evitar errores al acceder directamente.
 
 ### Rutas disponibles
 
