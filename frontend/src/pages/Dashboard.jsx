@@ -109,7 +109,7 @@ export default function DashboardPage() {
     setIsAdding(true);
     try {
       const createdAt = new Date().toISOString(); // Fecha local del cliente en ISO UTC
-      const newSession = await createSession({ task, duration, createdAt });
+      const newSession = await createSession(task, duration, createdAt);
       toast.success("Sesión añadida. Tu nueva tarea fue agregada correctamente.");
       setSessions([newSession, ...sessions]);
     } catch (err) {
@@ -118,6 +118,7 @@ export default function DashboardPage() {
       setIsAdding(false);
     }
   };
+
 
   const handleUpdate = async (updatedTask) => {
     setIsUpdating(true)

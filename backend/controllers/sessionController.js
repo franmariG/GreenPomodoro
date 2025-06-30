@@ -9,11 +9,19 @@ exports.getSessions = async (req, res) => {
 
 // Crear nueva sesión
 exports.createSession = async (req, res) => {
-  const { task, duration, createdAt } = req.body;
-  const newSession = await Session.create({ task, duration, createdAt });
-  res.status(201).json(newSession);
+  try {
+    const { task, duration, createdAt } = req.body;
+    const sessionData = { task, duration };
+    if (createdAt) {
+      sessionData.createdAt = new Date(createdAt);
+    }
+    const newSession = await Session.create(sessionData);
+    res.status(201).json(newSession);
+  } catch (err) {
+    console.error("Error creando sesión:", err);
+    res.status(500).json({ error: "Error al crear la sesión" });
+  }
 };
-
 // Actualizar sesión (nombre o duración)
 exports.updateSession = async (req, res) => {
   const { id } = req.params;
