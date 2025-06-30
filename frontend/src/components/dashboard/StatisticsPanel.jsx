@@ -29,7 +29,6 @@ function groupSessionsByDay(sessions) {
     const date = new Date(createdAt);
     // Extraemos la fecha en formato local YYYY-MM-DD para agrupar
     const dayKey = date.toLocaleDateString("en-CA"); // formato ISO local sin zona horaria
-    console.log(`Fecha local agrupada (dayKey): ${dayKey}, Día de la semana: ${date.toLocaleDateString("es-ES", { weekday: "long" })}`);
 
     if (!groups[dayKey]) groups[dayKey] = { count: 0, totalDuration: 0 };
     groups[dayKey].count += 1;

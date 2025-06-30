@@ -182,6 +182,7 @@ export default function DashboardPage() {
     const updated = res.session
     const challenge = res.retoVerde
     setSessions(sessions.map((s) => (s._id === updated._id ? updated : s)))
+    refreshStats()
     setEcoModal({ open: true, challenge })
 
     if (Notification.permission === "granted") {
@@ -191,7 +192,6 @@ export default function DashboardPage() {
       })
     }
 
-    refreshStats()
   } catch (err) {
     console.error("Error completando sesión:", err)
   } finally {
