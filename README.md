@@ -134,7 +134,7 @@ Además, la ruta raíz `/` del backend responde con un mensaje de texto simple (
 - Claves de Gemini API
 
 ### 1. Clonar el proyecto
-```
+
 ```bash
 git clone https://github.com/franmariG/GreenPomodoro.git
 cd GreenPomodoro
@@ -209,6 +209,21 @@ VITE_API_URL=https://greenpomodoro-tu-backend.onrender.com
 * Se siguió una estructura de carpetas modular para escalabilidad.
 * Se usaron hooks personalizados, carga condicional, animaciones y validaciones UX.
 * Toda la lógica de IA está aislada en geminiClient.js para su reutilización o reemplazo.
+
+## Manejo de estados y experiencia de usuario
+* Se usó useState, useEffect y useRef para controlar ciclos, modales y formularios.
+* Se manejan múltiples indicadores de carga: agregar sesión, actualizar, eliminar, completar Pomodoro.
+* La app también solicita permiso de notificación del navegador para enviar recordatorios al finalizar una sesión.
+* Se controló la reproducción de audio en móviles con una interacción previa para evitar bloqueos por seguridad (debe tener los permisos).
+
+## Manejo de errores
+GreenPomodoro implementa un manejo de errores básico pero efectivo:
+
+* **Backend (Node.js + Express)**: Se usan bloques try/catch en todas las operaciones críticas. Si ocurre un error (por ejemplo, al conectar con MongoDB o al procesar una sesión), se responde con un mensaje JSON claro y un código de estado HTTP apropiado.
+
+* **Frontend (React + Vite)**: Se muestran notificaciones visuales con la librería sonner cuando hay errores en operaciones como crear, actualizar o eliminar sesiones. También se incluyen indicadores de carga para evitar acciones repetidas o confusas.
+
+Estos mecanismos aseguran una experiencia fluida y ayudan al usuario a entender qué está ocurriendo en cada momento.
 
 ## Limitaciones actuales
 
