@@ -40,8 +40,8 @@ export const deleteSession = async (id) => {
   return await res.json();
 };
 
-export const getSessionStats = async () => {
-  const res = await fetch(`${BASE_URL}/stats`);
-  if (!res.ok) throw new Error("Error al obtener estadísticas");
+export const getSessionsCompleted = async () => {
+  const res = await fetch(`${BASE_URL}/completed`);
+  if (!res.ok) throw new Error("Error al obtener sesiones completadas");
   return await res.json();
 };

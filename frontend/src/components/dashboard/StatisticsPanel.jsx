@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { getSessionStats } from "@/lib/api";
-import { Bar } from "react-chartjs-2"
-import { motion } from "framer-motion"
+import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { getCompletedSessions, getSessionsCompleted } from "@/lib/api";
+import { Bar } from "react-chartjs-2";
+import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,32 +10,82 @@ import {
   BarElement,
   Tooltip,
   Legend,
-} from "chart.js"
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const fadeInUpScroll = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
   transition: { duration: 1 },
+};
+
+function groupSessionsByDay(sessions) {
+  // Creamos un objeto para agrupar sesiones por fecha local (YYYY-MM-DD)
+  const groups = {};
+
+  sessions.forEach(({ createdAt, duration }) => {
+    const date = new Date(createdAt);
+    // Extraemos la fecha en formato local YYYY-MM-DD para agrupar
+    const dayKey = date.toLocaleDateString("en-CA"); // formato ISO local sin zona horaria
+
+    if (!groups[dayKey]) groups[dayKey] = { count: 0, totalDuration: 0 };
+    groups[dayKey].count += 1;
+    groups[dayKey].totalDuration += duration;
+  });
+
+  return groups;
+}
+
+function getLast7DaysLabels() {
+  const labels = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString("en-CA")); // YYYY-MM-DD local
+  }
+  return labels;
 }
 
 export default function StatisticsPanel({ refreshKey }) {
-  const [stats, setStats] = useState(null)
+  const [sessions, setSessions] = useState([]);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    getSessionStats()
-      .then(setStats)
-      .catch((err) => console.error("Error al cargar estadísticas:", err));
-  }, [refreshKey])
+    getSessionsCompleted()
+      .then(setSessions)
+      .catch((err) => console.error("Error al cargar sesiones:", err));
+  }, [refreshKey]);
 
-  if (!stats) return null
+  useEffect(() => {
+    if (sessions.length === 0) return;
+
+    const grouped = groupSessionsByDay(sessions);
+    const last7Days = getLast7DaysLabels();
+
+    // Preparar datos para la gráfica
+    const weeklyData = last7Days.map((day) => ({
+      dayISO: day,
+      count: grouped[day]?.count || 0,
+      totalDuration: grouped[day]?.totalDuration || 0,
+    }));
+
+    // Estadísticas totales
+    const totalSessions = sessions.length;
+    const totalTime = sessions.reduce((sum, s) => sum + s.duration, 0);
+
+    setStats({ totalSessions, totalTime, weeklyData });
+  }, [sessions]);
+
+  if (!stats) return null;
 
   const barData = {
-    labels: stats.weeklyData.map((d) =>
-      new Date(d.dayISO).toLocaleDateString("es-VE", { weekday: "short" })
-    ),
+    labels: stats.weeklyData.map((d) => {
+      const date = new Date(d.dayISO);
+      return date.toLocaleDateString("es-ES", { weekday: "short" });
+    }),
     datasets: [
       {
         label: "Sesiones completadas",
@@ -54,7 +104,7 @@ export default function StatisticsPanel({ refreshKey }) {
     scales: {
       y: { beginAtZero: true, ticks: { stepSize: 1 } },
     },
-  }
+  };
 
   return (
     <section>
@@ -103,7 +153,6 @@ export default function StatisticsPanel({ refreshKey }) {
           </CardContent>
         </Card>
       </motion.div>
-
     </section>
-  )
+  );
 }
