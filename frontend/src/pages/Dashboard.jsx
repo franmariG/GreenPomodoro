@@ -182,6 +182,9 @@ export default function DashboardPage() {
       })
     }
 
+    // Vibración solo en móvil (no hace nada en desktop)
+    navigator.vibrate?.([300, 100, 300])
+
     if (audioRef.current) {
       audioRef.current.play().catch((err) =>
         console.error("Error de sonido:", err)
