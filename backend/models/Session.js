@@ -1,5 +1,8 @@
+// Modelo de datos para una sesión Pomodoro
+
 const mongoose = require('mongoose');
 
+// Esquema de sesión: tarea, duración, estado y fecha de creación
 const sessionSchema = new mongoose.Schema({
   task: { type: String, required: true },
   duration: { type: Number, default: 25 },

@@ -1,3 +1,5 @@
+// Conexión a la base de datos MongoDB con Mongoose
+
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
@@ -6,7 +8,7 @@ const connectDB = async () => {
     console.log('Conectado a MongoDB');
   } catch (err) {
     console.error('Error al conectar a MongoDB:', err.message);
-    process.exit(1);
+    process.exit(1); // Finaliza si hay error
   }
 };
 

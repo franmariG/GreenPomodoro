@@ -1,3 +1,5 @@
+// Tarjeta visual para mostrar una tarea con sus acciones (editar, iniciar, eliminar)
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -7,11 +9,11 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
   return (
     <Card className={task.status === "completed" ? "bg-green-50 border-green-200" : ""}>
       <CardContent className="flex flex-wrap items-center justify-between p-4 gap-4">
+        {/* Info principal: nombre, duración, estado */}
         <div className="flex items-center gap-4">
           <div
-            className={` w-3 h-3 rounded-full ${
-              task.status === "completed" ? "bg-green-500" : "bg-gray-300"
-            }`}
+            className={` w-3 h-3 rounded-full ${task.status === "completed" ? "bg-green-500" : "bg-gray-300"
+              }`}
           />
           <div>
             <h3
@@ -22,8 +24,9 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
             <p className="text-sm text-gray-600">{task.duration} minutos</p>
           </div>
         </div>
-
+        {/* Acciones y estado */}
         <div className="min-w-[160px] flex flex-1 items-center w-full flex-wrap gap-2 justify-end">
+          {/* Badge de estado */}
           <Badge variant={task.status === "completed" ? "default" : "secondary"}>
             {task.status === "completed" ? (
               <>
@@ -37,7 +40,7 @@ export default function TaskCard({ task, onStart, onDelete, onEdit }) {
               </>
             )}
           </Badge>
-
+          {/* Botones de acción */}
           <div className="flex gap-1 items-center self-center">
             {task.status === "pending" && (
               <>

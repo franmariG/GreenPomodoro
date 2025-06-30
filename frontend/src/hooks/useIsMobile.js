@@ -1,3 +1,5 @@
+// Hook personalizado para detectar si el usuario está en dispositivo móvil (ancho < 768px por defecto)
+
 import { useEffect, useState } from "react"
 
 export default function useIsMobile(breakpoint = 768) {

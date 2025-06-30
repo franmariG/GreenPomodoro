@@ -1,8 +1,12 @@
+// Panel de estadísticas con animaciones y gráfica semanal de sesiones completadas
+
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getSessionsCompleted } from "@/lib/api";
 import { Bar } from "react-chartjs-2";
 import { motion } from "framer-motion";
+
+// Registro de componentes necesarios para Chart.js
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +18,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+// Configuración de animación al hacer scroll
 const fadeInUpScroll = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
@@ -21,30 +26,27 @@ const fadeInUpScroll = {
   transition: { duration: 1 },
 };
 
+// Agrupa las sesiones por día local (formato YYYY-MM-DD) y suma duración
 function groupSessionsByDay(sessions) {
-  // Creamos un objeto para agrupar sesiones por fecha local (YYYY-MM-DD)
   const groups = {};
-
   sessions.forEach(({ createdAt, duration }) => {
     const date = new Date(createdAt);
-    // Extraemos la fecha en formato local YYYY-MM-DD para agrupar
-    const dayKey = date.toLocaleDateString("en-CA"); // formato ISO local sin zona horaria
-
+    const dayKey = date.toLocaleDateString("en-CA"); // formato ISO local
     if (!groups[dayKey]) groups[dayKey] = { count: 0, totalDuration: 0 };
     groups[dayKey].count += 1;
     groups[dayKey].totalDuration += duration;
   });
-
   return groups;
 }
 
+// Devuelve los últimos 7 días en formato YYYY-MM-DD
 function getLast7DaysLabels() {
   const labels = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     d.setDate(d.getDate() - i);
-    labels.push(d.toLocaleDateString("en-CA")); // YYYY-MM-DD local
+    labels.push(d.toLocaleDateString("en-CA"));
   }
   return labels;
 }
@@ -53,26 +55,26 @@ export default function StatisticsPanel({ refreshKey }) {
   const [sessions, setSessions] = useState([]);
   const [stats, setStats] = useState(null);
 
+  // Obtiene sesiones completadas desde el backend al montar o al cambiar refreshKey
   useEffect(() => {
     getSessionsCompleted()
       .then(setSessions)
       .catch((err) => console.error("Error al cargar sesiones:", err));
   }, [refreshKey]);
 
+  // Procesa los datos obtenidos para agrupar por día y calcular totales
   useEffect(() => {
     if (sessions.length === 0) return;
 
     const grouped = groupSessionsByDay(sessions);
     const last7Days = getLast7DaysLabels();
 
-    // Preparar datos para la gráfica
     const weeklyData = last7Days.map((day) => ({
       dayISO: day,
       count: grouped[day]?.count || 0,
       totalDuration: grouped[day]?.totalDuration || 0,
     }));
 
-    // Estadísticas totales
     const totalSessions = sessions.length;
     const totalTime = sessions.reduce((sum, s) => sum + s.duration, 0);
 
@@ -81,12 +83,13 @@ export default function StatisticsPanel({ refreshKey }) {
 
   if (!stats) return null;
 
+  // Configura los datos para la gráfica de barras
   const barData = {
     labels: stats.weeklyData.map((d) => {
-    const [year, month, day] = d.dayISO.split("-");
-    const localDate = new Date(Number(year), Number(month) - 1, Number(day));
-    return localDate.toLocaleDateString("es-ES", { weekday: "short" });
-  }),
+      const [year, month, day] = d.dayISO.split("-");
+      const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+      return localDate.toLocaleDateString("es-ES", { weekday: "short" });
+    }),
     datasets: [
       {
         label: "Sesiones completadas",
@@ -97,6 +100,7 @@ export default function StatisticsPanel({ refreshKey }) {
     ],
   };
 
+  // Configuración del gráfico
   const barOptions = {
     responsive: true,
     plugins: {
@@ -110,6 +114,7 @@ export default function StatisticsPanel({ refreshKey }) {
   return (
     <section>
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Estadísticas Generales</h2>
+      {/* Tarjetas de totales */}
       <div className="grid md:grid-cols-2 gap-6">
         <motion.div
           initial={fadeInUpScroll.initial}
@@ -124,7 +129,6 @@ export default function StatisticsPanel({ refreshKey }) {
             </CardContent>
           </Card>
         </motion.div>
-
         <motion.div
           initial={fadeInUpScroll.initial}
           whileInView={fadeInUpScroll.whileInView}
@@ -139,7 +143,7 @@ export default function StatisticsPanel({ refreshKey }) {
           </Card>
         </motion.div>
       </div>
-
+      {/* Gráfico de barras */}
       <motion.div
         initial={fadeInUpScroll.initial}
         whileInView={fadeInUpScroll.whileInView}

@@ -1,3 +1,5 @@
+// Modal para editar nombre y duración de una tarea existente
+
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -6,7 +8,7 @@ import { Button } from "@/components/ui/button"
 export default function EditTaskModal({ open, task, onCancel, onSave }) {
   const [localTask, setLocalTask] = useState({ task: "", duration: 25 })
 
-  // Actualiza localTask cuando cambia la tarea original
+  // Sincroniza datos del modal con la tarea recibida
   useEffect(() => {
     if (task) {
       setLocalTask({ task: task.task, duration: task.duration })
@@ -21,7 +23,7 @@ export default function EditTaskModal({ open, task, onCancel, onSave }) {
   }
 
   const handleSave = () => {
-    onSave({ ...task, ...localTask }) // mantén el _id y otros campos
+    onSave({ ...task, ...localTask }) // Mantiene el _id y otros campos
   }
 
   if (!task) return null

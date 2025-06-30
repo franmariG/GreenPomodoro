@@ -1,9 +1,12 @@
+// Temporizador en cuenta regresiva de una sesión activa Pomodoro
+
 import { X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 export default function ActiveTimerCard({ session, timeLeft, onCancel }) {
+  // Formatea segundos a mm:ss
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -11,7 +14,7 @@ export default function ActiveTimerCard({ session, timeLeft, onCancel }) {
   }
 
   const totalTime = session?.duration ? session.duration * 60 : 1
-  const progress = Math.max(0, timeLeft / totalTime)
+  const progress = Math.max(0, timeLeft / totalTime) // Valor entre 0 y 1
 
   return (
     <motion.div
@@ -23,7 +26,7 @@ export default function ActiveTimerCard({ session, timeLeft, onCancel }) {
       <Card className="border-green-200 bg-white">
         <CardContent className="text-center py-8">
           <div className="space-y-4 flex flex-col items-center justify-center">
-            {/* SVG reloj animado */}
+            {/* Reloj circular con animación */}
             <div className="relative w-32 h-32">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle
@@ -59,12 +62,10 @@ export default function ActiveTimerCard({ session, timeLeft, onCancel }) {
                 En progreso
               </span>
             </div>
-
             {/* Tiempo y tarea */}
             <div className="text-6xl font-mono text-black-600">{formatTime(timeLeft)}</div>
             <div className="text-lg text-gray-800">{session?.task}</div>
-
-            {/* Botón cancelar */}
+            {/* Botón para cancelar sesión */}
             <Button
               variant="outline"
               onClick={onCancel}

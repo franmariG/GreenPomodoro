@@ -1,3 +1,5 @@
+// Modal para confirmar la eliminación de una sesión
+
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 

@@ -1,3 +1,5 @@
+// Punto de entrada de la app. Monta App dentro del DOM
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

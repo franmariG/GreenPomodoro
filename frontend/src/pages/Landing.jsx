@@ -1,3 +1,5 @@
+// Página principal del sitio: landing page con todas las secciones
+
 import Header from "@/components/Header"
 import HeroSection from "@/components/landing/HeroSection"
 import ProblemSolution from "@/components/landing/ProblemSolution"
@@ -16,7 +18,7 @@ export default function Landing() {
         <ProblemSolution />
         <Benefits />
         <HowItWorks />
-        <Mission/>
+        <Mission />
         <PreviewApp />
       </main>
       <Footer />

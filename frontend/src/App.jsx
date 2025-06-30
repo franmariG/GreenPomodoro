@@ -1,3 +1,4 @@
+// Componente raíz de la aplicación. Incluye rutas y notificaciones
 
 import AppRoutes from "./routes/AppRoutes";
 import { Toaster } from "@/components/ui/sonner"

@@ -1,3 +1,5 @@
+// Carrusel que muestra una vista previa de la aplicación en escritorio o móvil
+
 import React, { useState, useEffect, useRef } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -5,28 +7,30 @@ import { motion, AnimatePresence } from "framer-motion"
 import useIsMobile from "@/hooks/useIsMobile"
 
 export default function PreviewApp() {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile() // Detecta si es vista móvil
 
+  // Carga imágenes según el dispositivo
   const images = isMobile
     ? [
-        "/previewApp/previewAppMobile-1.png",
-        "/previewApp/previewAppMobile-2.png",
-        "/previewApp/previewAppMobile-3.png",
-        "/previewApp/previewAppMobile-4.png",
-        "/previewApp/previewAppMobile-5.png",
-      ]
+      "/previewApp/previewAppMobile-1.png",
+      "/previewApp/previewAppMobile-2.png",
+      "/previewApp/previewAppMobile-3.png",
+      "/previewApp/previewAppMobile-4.png",
+      "/previewApp/previewAppMobile-5.png",
+    ]
     : [
-        "/previewApp/previewApp-1.png",
-        "/previewApp/previewApp-2.png",
-        "/previewApp/previewApp-3.png",
-        "/previewApp/previewApp-4.png",
-        "/previewApp/previewApp-5.png",
-      ]
+      "/previewApp/previewApp-1.png",
+      "/previewApp/previewApp-2.png",
+      "/previewApp/previewApp-3.png",
+      "/previewApp/previewApp-4.png",
+      "/previewApp/previewApp-5.png",
+    ]
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loadedImages, setLoadedImages] = useState(Array(images.length).fill(false))
   const intervalRef = useRef(null)
 
+  // Marca imagen como cargada (para mostrar loading spinner)
   const handleImageLoad = (index) => {
     setLoadedImages((prev) => {
       const updated = [...prev]
@@ -35,6 +39,7 @@ export default function PreviewApp() {
     })
   }
 
+  // Control de carrusel automático
   const startInterval = () => {
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prevIndex) =>
@@ -53,6 +58,7 @@ export default function PreviewApp() {
     return () => clearInterval(intervalRef.current)
   }, [])
 
+  // Navegación manual
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
     resetInterval()
@@ -71,6 +77,7 @@ export default function PreviewApp() {
   return (
     <section className="bg-gradient-to-tr from-white to-green-100 py-16">
       <div className="w-full px-4 md:px-6 text-center mb-12">
+        {/* Título y descripción */}
         <motion.h2
           className="text-3xl font-bold text-gray-900 mb-4"
           initial={{ opacity: 0, y: -20 }}
@@ -80,7 +87,6 @@ export default function PreviewApp() {
         >
           Vista previa de la aplicación
         </motion.h2>
-
         <motion.p
           className="text-gray-600 max-w-2xl text-lg mx-auto"
           initial={{ opacity: 0 }}
@@ -90,8 +96,7 @@ export default function PreviewApp() {
         >
           Una interfaz limpia y minimalista diseñada para maximizar tu productividad mientras cuidas el medio ambiente.
         </motion.p>
-
-        {/* Carrusel */}
+        {/* Carrusel de imágenes */}
         <div className="max-w-4xl mx-auto mt-12 flex items-center justify-center gap-4">
           <button
             onClick={goToPrevious}
@@ -99,15 +104,16 @@ export default function PreviewApp() {
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
-
           <div className="relative w-full aspect-[9/16] md:aspect-[16/9] max-w-sm sm:max-w-3xl">
             <Card className="overflow-hidden shadow-2xl w-full h-full relative">
               <CardContent className="p-0 bg-gradient-to-br from-green-300 to-green-400 w-full h-full flex items-center justify-center relative">
+                {/* Spinner mientras carga la imagen */}
                 {!loadedImages[currentIndex] && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
                     <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
                   </div>
                 )}
+                {/* Imagen con animación */}
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentIndex}
@@ -124,7 +130,6 @@ export default function PreviewApp() {
               </CardContent>
             </Card>
           </div>
-
           <button
             onClick={goToNext}
             className="bg-green-600 text-white p-2 rounded-full shadow-lg opacity-75 hover:opacity-100 transition-opacity flex-shrink-0"
@@ -132,16 +137,14 @@ export default function PreviewApp() {
             <ChevronRight className="h-6 w-6" />
           </button>
         </div>
-
-        {/* Puntos indicadores */}
+        {/* Indicadores de posición */}
         <div className="flex justify-center mt-4 space-x-2">
           {images.map((_, index) => (
             <div
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${
-                currentIndex === index ? "bg-green-600" : "bg-gray-300"
-              }`}
+              className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${currentIndex === index ? "bg-green-600" : "bg-gray-300"
+                }`}
             ></div>
           ))}
         </div>

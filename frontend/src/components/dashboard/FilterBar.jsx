@@ -1,9 +1,10 @@
+// Barra de filtros para sesiones: todas, pendientes o completadas
+
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 export default function FilterBar({ filter, onChange, counts }) {
   const baseClasses = "hover:border-gray-600 focus:ring-0 focus:outline-none focus:border-gray-600"
-
   return (
     <motion.div
       className="flex flex-wrap gap-2"
@@ -12,6 +13,7 @@ export default function FilterBar({ filter, onChange, counts }) {
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Filtro: Todas */}
       <Button
         variant={filter === "all" ? "default" : "outline"}
         onClick={() => onChange("all")}
@@ -22,7 +24,7 @@ export default function FilterBar({ filter, onChange, counts }) {
           Todas&nbsp;(<span>{counts?.all ?? 0}</span>)
         </span>
       </Button>
-
+      {/* Filtro: Pendientes */}
       <Button
         variant={filter === "pending" ? "default" : "outline"}
         onClick={() => onChange("pending")}
@@ -33,7 +35,7 @@ export default function FilterBar({ filter, onChange, counts }) {
           Pendientes&nbsp;(<span>{counts?.pending ?? 0}</span>)
         </span>
       </Button>
-
+      {/* Filtro: Completadas */}
       <Button
         variant={filter === "completed" ? "default" : "outline"}
         onClick={() => onChange("completed")}

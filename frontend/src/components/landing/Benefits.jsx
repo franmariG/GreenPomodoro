@@ -1,8 +1,11 @@
+// Sección de beneficios que explica por qué usar GreenPomodoro
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Brain, Sprout, TrendingUp } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function Benefits() {
+  // Variantes para animación de las tarjetas con delay progresivo
   const cardVariants = {
     hidden: { opacity: 0, y: 40 },
     visible: (i) => ({
@@ -11,10 +14,10 @@ export default function Benefits() {
       transition: { delay: i * 0.2, duration: 0.6 },
     }),
   }
-
   return (
     <section className="bg-gradient-to-b from-white to-green-200 py-16 px-6">
       <div className="w-full px-4">
+        {/* Título y descripción animados */}
         <motion.h2
           className="text-3xl font-bold text-center text-gray-900 mb-4 "
           initial={{ opacity: 0, y: -20 }}
@@ -25,15 +28,15 @@ export default function Benefits() {
           ¿Por qué elegir GreenPomodoro?
         </motion.h2>
         <motion.p
-                className="text-lg text-gray-600 text-center mb-12 px-10"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
-                GreenPomodoro va más allá de la gestión del tiempo. Es una herramienta diseñada para transformar tu enfoque diario, impulsando tu concentración mientras cultivas un impacto positivo en el planeta.
-              </motion.p>
-
+          className="text-lg text-gray-600 text-center mb-12 px-10"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          GreenPomodoro va más allá de la gestión del tiempo. Es una herramienta diseñada para transformar tu enfoque diario, impulsando tu concentración mientras cultivas un impacto positivo en el planeta.
+        </motion.p>
+        {/* Tarjetas de beneficios animadas */}
         <div className="grid md:grid-cols-3 gap-8">
           {[{
             Icon: Brain,

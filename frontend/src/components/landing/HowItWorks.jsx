@@ -1,8 +1,11 @@
+// Carrusel de pasos que explica cómo funciona GreenPomodoro
+
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Timer, BicepsFlexed, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
+// Datos de los pasos
 const steps = [
   {
     title: "1. Planifica tu sesión",
@@ -28,29 +31,32 @@ export default function HowItWorksSteps() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const intervalRef = useRef(null)
 
+  // Cambiar al siguiente paso
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % steps.length)
     resetInterval()
   }
 
+  // Cambiar al paso anterior
   const goToPrev = () => {
     setCurrentIndex((prev) => (prev - 1 + steps.length) % steps.length)
     resetInterval()
   }
 
-
+  // Inicia el carrusel automático
   const startInterval = () => {
     intervalRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % steps.length)
     }, 5000)
   }
 
+  // Reinicia el temporizador cuando el usuario navega manualmente
   const resetInterval = () => {
     clearInterval(intervalRef.current)
     startInterval()
   }
 
-
+  // Monta el carrusel al cargar
   useEffect(() => {
     startInterval()
     return () => clearInterval(intervalRef.current)
@@ -59,6 +65,7 @@ export default function HowItWorksSteps() {
 
   return (
     <section className="px-6 bg-gradient-to-b from-green-200 via-green-50 to-white py-16">
+      {/* Título de sección */}
       <div className="w-full px-4 md:px-6 text-center mb-12">
         <motion.h2
           className="text-3xl font-bold mb-4"
@@ -79,16 +86,16 @@ export default function HowItWorksSteps() {
           Tres simples pasos para convertir tu trabajo en impacto positivo.
         </motion.p>
       </div>
-
       {/* Carrusel de tarjetas */}
       <div className="max-w-4xl mx-auto flex items-center justify-center gap-6">
+        {/* Botón anterior */}
         <button
           onClick={goToPrev}
           className="bg-green-600 text-white p-2 rounded-full shadow-lg opacity-75 hover:opacity-100 transition-opacity flex-shrink-0"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
-
+        {/* Tarjeta animada con el paso actual */}
         <div className="w-full h-auto relative">
           <AnimatePresence mode="wait">
             <motion.div
@@ -112,7 +119,7 @@ export default function HowItWorksSteps() {
             </motion.div>
           </AnimatePresence>
         </div>
-
+        {/* Botón siguiente */}
         <button
           onClick={goToNext}
           className="bg-green-600 text-white p-2 rounded-full shadow-lg opacity-75 hover:opacity-100 transition-opacity flex-shrink-0"
@@ -120,7 +127,6 @@ export default function HowItWorksSteps() {
           <ChevronRight className="w-6 h-6" />
         </button>
       </div>
-
       {/* Puntos de navegación */}
       <div className="flex justify-center mt-4 space-x-2">
         {steps.map((_, i) => (
@@ -130,9 +136,8 @@ export default function HowItWorksSteps() {
               setCurrentIndex(i)
               resetInterval()
             }}
-            className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${
-              currentIndex === i ? "bg-green-600" : "bg-gray-300"
-            }`}
+            className={`w-3 h-3 rounded-full cursor-pointer transition-colors ${currentIndex === i ? "bg-green-600" : "bg-gray-300"
+              }`}
           />
         ))}
       </div>

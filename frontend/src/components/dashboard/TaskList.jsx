@@ -1,9 +1,11 @@
+// Lista de tareas Pomodoro filtradas (todas, pendientes o completadas)
 import { Card, CardContent } from "@/components/ui/card"
 import { Clock } from "lucide-react"
 import TaskCard from "./TaskCard"
 import { AnimatePresence, motion } from "framer-motion"
 
 export default function TaskList({ tasks, filter, onStart, onDelete, onEdit }) {
+  // Si no hay tareas, mostrar mensaje según filtro
   if (tasks.length === 0) {
     return (
       <Card>
@@ -18,19 +20,18 @@ export default function TaskList({ tasks, filter, onStart, onDelete, onEdit }) {
       </Card>
     )
   }
-
-return (
+  // Muestra la lista con animaciones
+  return (
     <div className="space-y-4">
       <AnimatePresence mode="popLayout">
         {tasks.map((task) => (
           <motion.div
             key={task._id}
-            initial={{ opacity: 0, x: -50 }}       // Aparece desde la izquierda
-            animate={{ opacity: 1, x: 0 }}         // Se acomoda en su lugar
-            exit={{ opacity: 0, x: -50 }}          // Sale hacia la izquierda
-            transition={{ duration: 1 }}         // Animación más lenta
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 1 }}
           >
-
             <TaskCard
               task={task}
               onStart={onStart}

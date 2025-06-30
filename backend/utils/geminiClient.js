@@ -1,8 +1,11 @@
+// Cliente Gemini para generar retos ecológicos
+
 require('dotenv').config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Categorías posibles para retos ecológicos
 const categoriasRetos = [
   "ahorro de energía (luces, dispositivos electrónicos, termostato)",
   "reducción de residuos (reciclaje, reutilización, limpieza)",
@@ -13,6 +16,7 @@ const categoriasRetos = [
   "consumo consciente (reflexionar sobre una compra, evitar desechables)",
 ];
 
+// Genera un reto verde con Gemini basado en una categoría al azar
 async function generarRetoVerdeGemini() {
   const categoriaFoco = categoriasRetos[Math.floor(Math.random() * categoriasRetos.length)];
 
@@ -41,7 +45,8 @@ Devuelve **solo el reto**, sin explicaciones ni saludos.
     return response.text().trim();
   } catch (err) {
     console.error("Error generando reto con Gemini:", err);
-    return "Ajusta el brillo de tu pantalla para ahorrar energía"; // Fallback
+    // Reto por defecto si falla Gemini
+    return "Ajusta el brillo de tu pantalla para ahorrar energía";
   }
 }
 

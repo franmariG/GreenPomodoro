@@ -1,3 +1,5 @@
+// Sección principal de bienvenida con título, descripción y llamado a la acción
+
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
@@ -6,6 +8,7 @@ export default function HeroSection() {
   return (
     <section className=" px-4 py-16 md:px-6 md:py-24 text-center space-y-8">
       <div className="space-y-12">
+        {/* Título animado */}
         <motion.h1
           className="max-w-3xl mx-auto text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl"
           initial={{ opacity: 0, y: -30 }}
@@ -15,7 +18,7 @@ export default function HeroSection() {
           Convierte tu Productividad en un{" "}
           <span className="text-green-600">Impacto Positivo</span>
         </motion.h1>
-
+        {/* Subtítulo animado */}
         <motion.p
           className="text-xl text-gray-600 max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
@@ -24,7 +27,7 @@ export default function HeroSection() {
         >
           Trabaja, enfócate y haz el bien. Un Pomodoro a la vez.
         </motion.p>
-
+        {/* Botón animado para iniciar */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

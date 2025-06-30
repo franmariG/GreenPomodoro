@@ -1,3 +1,5 @@
+// Sección que presenta el problema del usuario y cómo GreenPomodoro lo soluciona
+
 import { Card, CardContent } from "@/components/ui/card"
 import { CircleX, CheckCircle } from "lucide-react"
 import { motion } from "framer-motion"
@@ -5,6 +7,7 @@ import { motion } from "framer-motion"
 export default function ProblemSolution() {
   return (
     <section className="bg-white py-16 px-6">
+      {/* Título y descripción animados */}
       <motion.h2
         className="text-3xl font-bold text-center text-gray-900 mb-4"
         initial={{ opacity: 0, y: -20 }}
@@ -15,16 +18,16 @@ export default function ProblemSolution() {
         Tu Desafío, Nuestra Solución
       </motion.h2>
       <motion.p
-                className="text-lg text-gray-600 text-center mb-12"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
-                Integramos dos necesidades reales: Productividad + Sostenibilidad
-              </motion.p>
-
+        className="text-lg text-gray-600 text-center mb-12"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+      >
+        Integramos dos necesidades reales: Productividad + Sostenibilidad
+      </motion.p>
       <div className="w-full px-4 md:px-6 grid md:grid-cols-2 gap-12 items-center">
+        {/* Tarjeta del Problema */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -45,7 +48,7 @@ export default function ProblemSolution() {
             </CardContent>
           </Card>
         </motion.div>
-
+        {/* Tarjeta de la Solución */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
