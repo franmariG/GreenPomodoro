@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Clock } from "lucide-react"
 import TaskCard from "./TaskCard"
+import { AnimatePresence, motion } from "framer-motion"
 
 export default function TaskList({ tasks, filter, onStart, onDelete, onEdit }) {
   if (tasks.length === 0) {
@@ -18,17 +19,27 @@ export default function TaskList({ tasks, filter, onStart, onDelete, onEdit }) {
     )
   }
 
-  return (
+return (
     <div className="space-y-4">
-      {tasks.map((task) => (
-        <TaskCard
-          key={task._id}
-          task={task}
-          onStart={onStart}
-          onDelete={onDelete}
-          onEdit={onEdit}
-        />
-      ))}
+      <AnimatePresence mode="popLayout">
+        {tasks.map((task) => (
+          <motion.div
+            key={task._id}
+            initial={{ opacity: 0, x: -50 }}       // Aparece desde la izquierda
+            animate={{ opacity: 1, x: 0 }}         // Se acomoda en su lugar
+            exit={{ opacity: 0, x: -50 }}          // Sale hacia la izquierda
+            transition={{ duration: 1 }}         // Animación más lenta
+          >
+
+            <TaskCard
+              task={task}
+              onStart={onStart}
+              onDelete={onDelete}
+              onEdit={onEdit}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   )
 }

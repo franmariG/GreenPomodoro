@@ -1,10 +1,17 @@
 import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion"
 
 export default function FilterBar({ filter, onChange, counts }) {
   const baseClasses = "hover:border-gray-600 focus:ring-0 focus:outline-none focus:border-gray-600"
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <motion.div
+      className="flex flex-wrap gap-2"
+      initial={{ opacity: 0, x: -40 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5 }}
+    >
       <Button
         variant={filter === "all" ? "default" : "outline"}
         onClick={() => onChange("all")}
@@ -37,6 +44,6 @@ export default function FilterBar({ filter, onChange, counts }) {
           Completadas&nbsp;(<span>{counts?.completed ?? 0}</span>)
         </span>
       </Button>
-    </div>
+    </motion.div>
   )
 }

@@ -3,6 +3,7 @@ import { Plus } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { motion } from "framer-motion"
 
 export default function AddSessionForm({ onAdd }) {
   const [task, setTask] = useState("")
@@ -17,6 +18,11 @@ export default function AddSessionForm({ onAdd }) {
   }
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -53,5 +59,6 @@ export default function AddSessionForm({ onAdd }) {
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   )
 }
