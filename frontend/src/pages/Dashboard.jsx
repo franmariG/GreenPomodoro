@@ -166,6 +166,15 @@ export default function DashboardPage() {
   const handleCompleteSession = async (id) => {
   if (isCompletingRef.current) return
   isCompletingRef.current = true
+
+  if (audioRef.current) {
+    try {
+      await audioRef.current.play()
+    } catch (err) {
+      console.error("Error al reproducir el sonido:", err)
+    }
+  }
+
   setShowCompleteLoading(true)
 
   try {
@@ -180,15 +189,6 @@ export default function DashboardPage() {
         body: "Haz una pausa y completa tu reto ecológico",
         icon: "/greenpomodoro.svg",
       })
-    }
-
-    // Vibración solo en móvil (no hace nada en desktop)
-    navigator.vibrate?.([300, 100, 300])
-
-    if (audioRef.current) {
-      audioRef.current.play().catch((err) =>
-        console.error("Error de sonido:", err)
-      )
     }
 
     refreshStats()
